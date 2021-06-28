@@ -7,7 +7,7 @@
 
 import Suite
 
-class MazeGenerator: ObservableObject {
+class MazeGenerator_Prim: ObservableObject {
    var random = SeededRandomNumberGenerator(seed: Int(Date().timeIntervalSinceReferenceDate))
    var maze: Maze
 	@Published var done = false
@@ -98,12 +98,12 @@ class MazeGenerator: ObservableObject {
 }
 
 extension Maze.Cell {
-   func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [MazeGenerator.CellWall] {
-      allWalls.shuffled(using: &random).map { MazeGenerator.CellWall(wall: $0, position: position) }
+   func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [MazeGenerator_Prim.CellWall] {
+      allWalls.shuffled(using: &random).map { MazeGenerator_Prim.CellWall(wall: $0, position: position) }
 	}
 }
 
-extension MazeGenerator {
+extension MazeGenerator_Prim {
    struct Visited {
       var list: [Bool]
       let width: Int
