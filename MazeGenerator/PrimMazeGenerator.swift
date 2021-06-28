@@ -35,36 +35,24 @@ class PrimMazeGenerator: MazeGenerator {
 		visited[seed.position] = true
 	}
    
-   func continueGeneration(asynchronously: Bool) {
-		while true {
-         var found = false
-			guard !done, walls.isNotEmpty else {
-				timer?.invalidate()
-				done = true
-				break
-			}
-			
-         let wall = nextWall
-			for cell in cells(relativeTo: wall) {
-				if !visited[cell.position] {
-               visited[cell.position] = true
-               maze.remove(wall: cell.wall, at: cell.position)
-					walls += maze[cell.position].allGeneratorWalls(using: &random)
-               found = true
-				}
-			}
-			
-			if asynchronously, found {
+	func generateSingleStep() -> MazeGenerationStepResult {
+		guard let wall = nextWall else { return .completed }
+		for cell in cells(relativeTo: wall) {
+			if !visited[cell.position] {
+				visited[cell.position] = true
+				maze.remove(wall: cell.wall, at: cell.position)
+				walls += maze[cell.position].allGeneratorWalls(using: &random)
 				self.objectWillChange.send()
-				return
+				return .changed
 			}
 		}
+		return .noChange
 	}
-   
-   var nextWall: CellWall {
+
+	var nextWall: CellWall? {
       self.walls.shuffle(using: &random)
       
-      let found = walls[0]
+		guard let found = walls.first else { return nil }
       walls.remove(at: 0)
       return found
    }

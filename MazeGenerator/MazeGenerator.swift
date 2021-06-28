@@ -18,9 +18,12 @@ protocol MazeGenerator: ObservableObject {
 	func start(interval: TimeInterval)
 	func prepare()
 	func continueGeneration(asynchronously: Bool)
+	func generateSingleStep() -> MazeGenerationStepResult
 
 	init(maze: Maze, seed: Int?)
 }
+
+enum MazeGenerationStepResult { case completed, noChange, changed }
 
 extension MazeGenerator {
 	func start(interval: TimeInterval = 0.1) {
@@ -43,4 +46,23 @@ extension MazeGenerator {
 		timer?.invalidate()
 		done = true
 	}
+	
+	func continueGeneration(asynchronously: Bool) {
+		while true {
+			var found = false
+			let stepResult = done ? .completed : generateSingleStep()
+			guard stepResult != .completed else {
+				timer?.invalidate()
+				done = true
+				break
+			}
+			
+			if stepResult == .changed { found = true }
+			
+			if asynchronously, found {
+				return
+			}
+		}
+	}
+
 }
