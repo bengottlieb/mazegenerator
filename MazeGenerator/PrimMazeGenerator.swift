@@ -7,10 +7,10 @@
 
 import Suite
 
-class MazeGenerator_Prim: ObservableObject {
+class PrimMazeGenerator: MazeGenerator {
    var random = SeededRandomNumberGenerator(seed: Int(Date().timeIntervalSinceReferenceDate))
    var maze: Maze
-	@Published var done = false
+	var done = false { didSet { objectWillChange.send() }}
    var walls: [CellWall] = []
 	weak var timer: Timer?
    var isGenerating: Bool { timer != nil && !done }
@@ -22,44 +22,25 @@ class MazeGenerator_Prim: ObservableObject {
 		let position: Maze.Position
    }
 	
-   init(maze: Maze, seed: Int? = nil) {
+   required init(maze: Maze, seed: Int? = nil) {
       self.randomSeed = seed
       self.maze = maze
    }
    
-   func cancel() {
-      timer?.invalidate()
-      done = true
-   }
+	func prepare() {
+		visited = Visited(width: maze.width, height: maze.height)
+		
+		let seed = maze.randomCell(using: &random)
+		walls = seed.allGeneratorWalls(using: &random)
+		visited[seed.position] = true
+	}
    
-	func start(interval: TimeInterval = 0.1) {
-		timer?.invalidate()
-      visited = Visited(width: maze.width, height: maze.height)
-      if let seed = randomSeed {
-         random = SeededRandomNumberGenerator(seed: seed)
-      }
-
-		if maze.isEmpty { return }
-      maze.clear()
-		done = false
-      let seed = maze.randomCell(using: &random)
-      
-      walls = seed.allGeneratorWalls(using: &random)
-      visited[seed.position] = true
-		if interval != 0 {
-         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in self.continueGeneration(asynchronously: true) })
-		} else {
-			self.continueGeneration(asynchronously: false)
-		}
-   }
-	
    func continueGeneration(asynchronously: Bool) {
 		while true {
          var found = false
 			guard !done, walls.isNotEmpty else {
 				timer?.invalidate()
 				done = true
-				print("Done")
 				break
 			}
 			
@@ -98,12 +79,12 @@ class MazeGenerator_Prim: ObservableObject {
 }
 
 extension Maze.Cell {
-   func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [MazeGenerator_Prim.CellWall] {
-      allWalls.shuffled(using: &random).map { MazeGenerator_Prim.CellWall(wall: $0, position: position) }
+   func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [PrimMazeGenerator.CellWall] {
+      allWalls.shuffled(using: &random).map { PrimMazeGenerator.CellWall(wall: $0, position: position) }
 	}
 }
 
-extension MazeGenerator_Prim {
+extension PrimMazeGenerator {
    struct Visited {
       var list: [Bool]
       let width: Int

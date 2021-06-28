@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MazeGeneratorView: View {
-   @StateObject var generator: MazeGenerator_Prim
+   @StateObject var generator: PrimMazeGenerator
    
    var body: some View {
       MazeView(maze: generator.maze)
