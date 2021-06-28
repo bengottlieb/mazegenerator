@@ -8,9 +8,20 @@
 import SwiftUI
 
 struct MazeGeneratorView<Generator: MazeGenerator>: View {
-   @StateObject var generator: Generator
+   @ObservedObject var generator: Generator
+	@State var randomized = true
    
    var body: some View {
-      MazeView(maze: generator.maze)
+		VStack() {
+			MazeView(maze: generator.maze)
+				.padding()
+			
+			Toggle("Randomized", isOn: $randomized.onChange { randomized in
+				generator.randomSeed = randomized ? nil : 1
+			})
+		}
+		.onAppear() {
+			randomized = generator.randomSeed == nil
+		}
    }
 }

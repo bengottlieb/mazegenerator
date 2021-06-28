@@ -31,7 +31,6 @@ class PrimMazeGenerator: MazeGenerator {
 				visited[cell.position] = true
 				maze.remove(wall: cell.wall, at: cell.position)
 				walls += maze[cell.position].allGeneratorWalls(using: &random)
-				self.objectWillChange.send()
 				return .changed
 			}
 		}

@@ -62,6 +62,7 @@ extension MazeGenerator {
 			if stepResult == .changed { found = true }
 			
 			if asynchronously, found {
+				self.objectWillChange.send()
 				return
 			}
 		}

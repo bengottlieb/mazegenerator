@@ -33,6 +33,16 @@ extension Maze {
 	func isValid(_ pos: Position) -> Bool {
 		pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height
 	}
+	
+	func allNeigbors(of pos: Position) -> [Position] {
+		var result: [Position] = []
+		if pos.x > 0 { result.append(Position(pos.x - 1, pos.y)) }
+		if pos.y > 0 { result.append(Position(pos.x, pos.y - 1)) }
+
+		if pos.x < (width - 1) { result.append(Position(pos.x + 1, pos.y)) }
+		if pos.y < (height - 1) { result.append(Position(pos.x, pos.y + 1)) }
+		return result
+	}
 
 	mutating func remove(wall: Wall, at position: Position) {
 		cells[index(position)].remove(wall)
@@ -41,12 +51,23 @@ extension Maze {
 		}
 	}
 
-	struct Position {
+	struct Position: Equatable {
 		var x: Int
 		var y: Int
 		init(_ x: Int, _ y: Int) {
 			self.x = x
 			self.y = y
+		}
+		
+		func direction(to other: Position) -> Direction? {
+			if self == other { return nil }
+			if x == other.x { return y < other.y ? .down : .up }
+			if y == other.y { return x < other.x ? .right : .left }
+			return nil
+		}
+		
+		static func ==(lhs: Position, rhs: Position) -> Bool {
+			lhs.x == rhs.x && lhs.y == rhs.y
 		}
       
       func isConnected(to other: Position) -> Bool {
