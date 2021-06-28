@@ -48,5 +48,11 @@ extension Maze {
 			self.x = x
 			self.y = y
 		}
+      
+      func isConnected(to other: Position) -> Bool {
+         if x == other.x { return abs(y - other.y) == 1 }
+         if y == other.y { return abs(x - other.x) == 1 }
+         return false
+      }
 	}
 }

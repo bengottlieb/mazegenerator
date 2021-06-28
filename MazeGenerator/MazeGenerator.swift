@@ -15,6 +15,7 @@ class MazeGenerator: ObservableObject {
 	weak var timer: Timer?
    var isGenerating: Bool { timer != nil && !done }
    var randomSeed: Int?
+   var visited = Visited(width: 1, height: 1)
    
    struct CellWall {
       let wall: Maze.Wall
@@ -33,6 +34,7 @@ class MazeGenerator: ObservableObject {
    
 	func start(interval: TimeInterval = 0.1) {
 		timer?.invalidate()
+      visited = Visited(width: maze.width, height: maze.height)
       if let seed = randomSeed {
          random = SeededRandomNumberGenerator(seed: seed)
       }
@@ -43,7 +45,7 @@ class MazeGenerator: ObservableObject {
       let seed = maze.randomCell(using: &random)
       
       walls = seed.allGeneratorWalls(using: &random)
-      maze[visited: seed.position] = true
+      visited[seed.position] = true
 		if interval != 0 {
          timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in self.continueGeneration(asynchronously: true) })
 		} else {
@@ -61,12 +63,10 @@ class MazeGenerator: ObservableObject {
 				break
 			}
 			
-         let index = Int.random(in: 0..<walls.count, using: &random)
-			let wall = walls[index]
-			walls.remove(at: index)
+         let wall = nextWall
 			for cell in cells(relativeTo: wall) {
-				if !maze[visited: cell.position] {
-               maze[visited: cell.position] = true
+				if !visited[cell.position] {
+               visited[cell.position] = true
                maze.remove(wall: cell.wall, at: cell.position)
 					walls += maze[cell.position].allGeneratorWalls(using: &random)
                found = true
@@ -79,6 +79,14 @@ class MazeGenerator: ObservableObject {
 			}
 		}
 	}
+   
+   var nextWall: CellWall {
+      self.walls.shuffle(using: &random)
+      
+      let found = walls[0]
+      walls.remove(at: 0)
+      return found
+   }
 	
 	func cells(relativeTo wall: CellWall) -> [CellWall] {
 		var result = [wall]
@@ -93,4 +101,19 @@ extension Maze.Cell {
    func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [MazeGenerator.CellWall] {
       allWalls.shuffled(using: &random).map { MazeGenerator.CellWall(wall: $0, position: position) }
 	}
+}
+
+extension MazeGenerator {
+   struct Visited {
+      var list: [Bool]
+      let width: Int
+      init(width: Int, height: Int) {
+         self.width = width
+         list = Array(repeating: false, count: width * height)
+      }
+      subscript(position: Maze.Position) -> Bool {
+         get { list[position.x + position.y * width] }
+         set { list[position.x + position.y * width] = newValue }
+      }
+   }
 }

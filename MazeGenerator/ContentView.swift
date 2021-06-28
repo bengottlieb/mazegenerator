@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-   @StateObject var generator = MazeGenerator(maze: Maze(width: 7, height: 7), seed: 2)
+   @StateObject var generator = MazeGenerator(maze: Maze(width: 17, height: 17), seed: 2)
    
    var body: some View {
       VStack() {

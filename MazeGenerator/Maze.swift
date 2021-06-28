@@ -46,7 +46,7 @@ struct Maze {
 	
 	mutating func clear() {
 		for i in cells.indices {
-			cells[i].visited = false
+			cells[i].state = []
 			cells[i].walls = .all
 		}
 	}

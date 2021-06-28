@@ -16,7 +16,7 @@ struct MazeView: View {
 				HStack(spacing: 0) {
 					ForEach(0..<maze.width, id: \.self) { x in
 						if let cell = maze[x, y] {
-							Cell(cell: cell, fill: cell.visited ? .white : .white)
+							Cell(cell: cell)
                         .onTapGesture() {
                            print(cell)
                         }

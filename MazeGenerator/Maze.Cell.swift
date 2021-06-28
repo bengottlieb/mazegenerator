@@ -8,14 +8,20 @@
 import Foundation
 
 extension Maze {
-	subscript(visited position: Position) -> Bool {
-		get { self[position].visited }
-		set { self.cells[index(position)].visited = newValue }
+   subscript(visited position: Position) -> Cell.State {
+		get { self[position].state }
+		set { self.cells[index(position)].state = newValue }
 	}
 
 	struct Cell {
-		var walls: Wall = []
-		var visited = false
+      struct State: OptionSet {
+         let rawValue: Int
+         
+         static let visited = State(rawValue: 1 << 0)
+      }
+
+      var walls: Wall = []
+      var state: State = []
 		var position = Position(0, 0)
       var edgeCell: Bool = false
 		
