@@ -12,6 +12,12 @@ class GrowingTreeMazeGenerator: MazeGenerator {
 	var active: [Maze.Position] = []
 	var style: Style = .last
 	
+	convenience init(maze: Maze, seed: Int? = nil, style: Style) {
+		self.init(maze: maze, seed: seed)
+		self.style = style
+	}
+
+	
 	enum Style { case random, first, last }
 
 	override func prepare() {

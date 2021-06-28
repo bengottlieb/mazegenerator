@@ -9,12 +9,12 @@ import Suite
 
 class MazeGenerator: ObservableObject {
 	var random = SeededRandomNumberGenerator(seed: Int(Date().timeIntervalSinceReferenceDate))
-	var maze: Maze
-	var done = false { didSet { objectWillChange.send() }}
+	@Published var maze: Maze
+	@Published var done = false
 	weak var timer: Timer?
 	var randomSeed: Int?
 	
-	required init(maze: Maze, seed: Int? = nil) {
+	init(maze: Maze, seed: Int? = nil) {
 		self.randomSeed = seed
 		self.maze = maze
 	}
