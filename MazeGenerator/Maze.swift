@@ -5,7 +5,7 @@
 //  Created by Ben Gottlieb on 6/27/21.
 //
 
-import Foundation
+import Suite
 
 
 
@@ -37,7 +37,9 @@ struct Maze {
 		cells = Array(repeating: Cell(walls: .all), count: height * width)
       for y in 0..<height {
          for x in 0..<width {
-            cells[y * width + x].position = Position(x, y)
+            let index = y * width + x
+            cells[index].position = Position(x, y)
+            cells[index].edgeCell = x == 0 || y == 0 || x == (width - 1) || y == (height - 1)
          }
       }
 	}
@@ -49,8 +51,8 @@ struct Maze {
 		}
 	}
    
-   func randomCell() -> Cell {
-      cells.randomElement()!
+   func randomCell(using random: inout SeededRandomNumberGenerator) -> Cell {
+      cells.randomElement(using: &random)!
    }
 	
 	static let empty = Maze(width: 0, height: 0)

@@ -8,72 +8,81 @@
 import Suite
 
 class MazeGenerator: ObservableObject {
-	var maze: Binding<Maze> = .constant(.empty)
-	var done: Binding<Bool> = .constant(true)
+   var random = SeededRandomNumberGenerator(seed: Int(Date().timeIntervalSinceReferenceDate))
+   var maze: Maze
+	@Published var done = false
    var walls: [CellWall] = []
 	weak var timer: Timer?
+   var isGenerating: Bool { timer != nil && !done }
+   var randomSeed: Int?
    
    struct CellWall {
       let wall: Maze.Wall
 		let position: Maze.Position
    }
-   
-	init() {
-	}
 	
-	init(maze: Binding<Maze>, done: Binding<Bool>) {
+   init(maze: Maze, seed: Int? = nil) {
+      self.randomSeed = seed
       self.maze = maze
-		self.done = done
    }
    
-	func start(maze newMaze: Binding<Maze>? = nil, done newDone: Binding<Bool>? = nil, interval: TimeInterval = 0.1) {
-		if let maze = newMaze { self.maze = maze }
-		if let done = newDone { self.done = done }
+   func cancel() {
+      timer?.invalidate()
+      done = true
+   }
+   
+	func start(interval: TimeInterval = 0.1) {
 		timer?.invalidate()
+      if let seed = randomSeed {
+         random = SeededRandomNumberGenerator(seed: seed)
+      }
 
-		if maze.wrappedValue.isEmpty { return }
-		done.wrappedValue = false
-      let seed = maze.wrappedValue.randomCell()
+		if maze.isEmpty { return }
+      maze.clear()
+		done = false
+      let seed = maze.randomCell(using: &random)
       
-      walls = seed.allGeneratorWalls
-		maze.wrappedValue[visited: seed.position] = true
+      walls = seed.allGeneratorWalls(using: &random)
+      maze[visited: seed.position] = true
 		if interval != 0 {
-			timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in self.continueGeneration(interval: interval) })
+         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { _ in self.continueGeneration(asynchronously: true) })
 		} else {
-			self.continueGeneration(interval: interval)
+			self.continueGeneration(asynchronously: false)
 		}
    }
 	
-	func continueGeneration(interval: TimeInterval) {
-		while !done.wrappedValue {
-			guard walls.isNotEmpty else {
+   func continueGeneration(asynchronously: Bool) {
+		while true {
+         var found = false
+			guard !done, walls.isNotEmpty else {
 				timer?.invalidate()
-				done.wrappedValue = true
+				done = true
 				print("Done")
 				break
 			}
 			
-			let index = Int(Int.random(to: UInt32(walls.count)))
+         let index = Int.random(in: 0..<walls.count, using: &random)
 			let wall = walls[index]
 			walls.remove(at: index)
 			for cell in cells(relativeTo: wall) {
-				if !maze.wrappedValue[visited: cell.position] {
-					maze.wrappedValue[visited: cell.position] = true
-					maze.wrappedValue.remove(wall: cell.wall, at: cell.position)
-					walls += maze.wrappedValue[cell.position].allGeneratorWalls
+				if !maze[visited: cell.position] {
+               maze[visited: cell.position] = true
+               maze.remove(wall: cell.wall, at: cell.position)
+					walls += maze[cell.position].allGeneratorWalls(using: &random)
+               found = true
 				}
 			}
 			
-			if interval > 0 {
+			if asynchronously, found {
 				self.objectWillChange.send()
-				break
+				return
 			}
 		}
 	}
 	
 	func cells(relativeTo wall: CellWall) -> [CellWall] {
 		var result = [wall]
-		if let inverse = wall.wall.inverse, let otherSide = maze.wrappedValue[wall.position, wall.wall] {
+		if let inverse = wall.wall.inverse, let otherSide = maze[wall.position, wall.wall] {
 			result.append(CellWall(wall: inverse, position: otherSide.position))
 		}
 		return result
@@ -81,7 +90,7 @@ class MazeGenerator: ObservableObject {
 }
 
 extension Maze.Cell {
-	var allGeneratorWalls: [MazeGenerator.CellWall] {
-		allWalls.map { MazeGenerator.CellWall(wall: $0, position: position) }
+   func allGeneratorWalls(using random: inout SeededRandomNumberGenerator) -> [MazeGenerator.CellWall] {
+      allWalls.shuffled(using: &random).map { MazeGenerator.CellWall(wall: $0, position: position) }
 	}
 }

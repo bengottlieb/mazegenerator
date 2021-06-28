@@ -17,6 +17,7 @@
 		B59EB81F26896AFC009B52E8 /* MazeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59EB81E26896AFC009B52E8 /* MazeView.swift */; };
 		B5EB4B7A2689714800B5659D /* Maze.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EB4B792689714800B5659D /* Maze.swift */; };
 		B5EB4B7C2689715600B5659D /* MazeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EB4B7B2689715600B5659D /* MazeGenerator.swift */; };
+		B5EB4B7E2689EA8C00B5659D /* MazeGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EB4B7D2689EA8C00B5659D /* MazeGeneratorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		B59EB81E26896AFC009B52E8 /* MazeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MazeView.swift; sourceTree = "<group>"; };
 		B5EB4B792689714800B5659D /* Maze.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Maze.swift; sourceTree = "<group>"; };
 		B5EB4B7B2689715600B5659D /* MazeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MazeGenerator.swift; sourceTree = "<group>"; };
+		B5EB4B7D2689EA8C00B5659D /* MazeGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MazeGeneratorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				B56B24592689DC1700AEC813 /* Maze.Cell.swift */,
 				B56B24572689D8AB00AEC813 /* Maze.Position.swift */,
 				B5EB4B7B2689715600B5659D /* MazeGenerator.swift */,
+				B5EB4B7D2689EA8C00B5659D /* MazeGeneratorView.swift */,
 				B59EB80A268969DD009B52E8 /* MazeGeneratorApp.swift */,
 				B59EB80C268969DD009B52E8 /* ContentView.swift */,
 				B59EB81E26896AFC009B52E8 /* MazeView.swift */,
@@ -164,6 +167,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B56B245A2689DC1800AEC813 /* Maze.Cell.swift in Sources */,
+				B5EB4B7E2689EA8C00B5659D /* MazeGeneratorView.swift in Sources */,
 				B56B24582689D8AB00AEC813 /* Maze.Position.swift in Sources */,
 				B59EB80D268969DD009B52E8 /* ContentView.swift in Sources */,
 				B59EB81F26896AFC009B52E8 /* MazeView.swift in Sources */,

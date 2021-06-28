@@ -17,9 +17,10 @@ extension Maze {
 		var walls: Wall = []
 		var visited = false
 		var position = Position(0, 0)
+      var edgeCell: Bool = false
 		
 		mutating func remove(_ wall: Wall) {
-			
+         walls = walls.subtracting(wall)
 		}
 		
 		var allWalls: [Wall] {

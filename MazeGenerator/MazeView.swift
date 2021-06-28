@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct MazeView: View {
-	@Binding var maze: Maze
-	@ObservedObject var generator: MazeGenerator
-	@Binding var done: Bool
+	var maze: Maze
 	
 	var body: some View {
 		VStack(spacing: 0) {
@@ -18,7 +16,10 @@ struct MazeView: View {
 				HStack(spacing: 0) {
 					ForEach(0..<maze.width, id: \.self) { x in
 						if let cell = maze[x, y] {
-							Cell(cell: cell, fill: cell.visited ? .red : .white)
+							Cell(cell: cell, fill: cell.visited ? .white : .white)
+                        .onTapGesture() {
+                           print(cell)
+                        }
 						}
 					}
 				}
@@ -33,7 +34,7 @@ extension MazeView {
 		let cell: Maze.Cell
 		var fill = Color.white
 		var wall = Color.black
-		var wallThickness: CGFloat = 2
+		var wallThickness: CGFloat = 1
 		
 		var body: some View {
 			ZStack() {
@@ -48,7 +49,7 @@ extension MazeView {
 							.offset(x: -wallThickness / 2)
 					}
 					Spacer()
-					if cell.walls.contains(.right) {
+					if cell.edgeCell, cell.walls.contains(.right) {
 						Rectangle()
 							.fill(wall)
 							.frame(width: wallThickness)
@@ -64,7 +65,7 @@ extension MazeView {
 							.offset(y: -wallThickness / 2)
 					}
 					Spacer()
-					if cell.walls.contains(.down) {
+               if cell.edgeCell, cell.walls.contains(.down) {
 						Rectangle()
 							.fill(wall)
 							.frame(height: wallThickness)
@@ -76,10 +77,3 @@ extension MazeView {
 		}
 	}
 }
-
-//struct MazeView_Previews: PreviewProvider {
-//	static var previews: some View {
-//		MazeView(maze: Maze(width: 10, height: 10))
-//			.padding()
-//	}
-//}
