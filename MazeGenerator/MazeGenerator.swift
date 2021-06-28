@@ -7,25 +7,27 @@
 
 import Suite
 
-protocol MazeGenerator: ObservableObject {
-	var maze: Maze { get set }
-	var isGenerating: Bool { get }
-	var random: SeededRandomNumberGenerator { get set }
-	var timer: Timer? { get set }
-	var randomSeed: Int? { get set }
-	var done: Bool { get set }
-
-	func start(interval: TimeInterval)
-	func prepare()
-	func continueGeneration(asynchronously: Bool)
-	func generateSingleStep() -> MazeGenerationStepResult
-
-	init(maze: Maze, seed: Int?)
+class MazeGenerator: ObservableObject {
+	var random = SeededRandomNumberGenerator(seed: Int(Date().timeIntervalSinceReferenceDate))
+	var maze: Maze
+	var done = false { didSet { objectWillChange.send() }}
+	weak var timer: Timer?
+	var randomSeed: Int?
+	
+	required init(maze: Maze, seed: Int? = nil) {
+		self.randomSeed = seed
+		self.maze = maze
+	}
+	func prepare() { }
+	
+	func generateSingleStep() -> MazeGenerationStepResult { return .completed }
 }
 
-enum MazeGenerationStepResult { case completed, noChange, changed }
 
 extension MazeGenerator {
+	enum MazeGenerationStepResult { case completed, noChange, changed }
+	var isGenerating: Bool { timer != nil && !done }
+
 	func start(interval: TimeInterval = 0.1) {
 		timer?.invalidate()
 		if let seed = randomSeed { random = SeededRandomNumberGenerator(seed: seed) }
@@ -65,4 +67,21 @@ extension MazeGenerator {
 		}
 	}
 
+}
+
+extension MazeGenerator {
+	struct Visited {
+		var list: [Bool]
+		let width: Int
+		
+		init(width: Int, height: Int) {
+			self.width = width
+			list = Array(repeating: false, count: width * height)
+		}
+		
+		subscript(position: Maze.Position) -> Bool {
+			get { list[position.x + position.y * width] }
+			set { list[position.x + position.y * width] = newValue }
+		}
+	}
 }
