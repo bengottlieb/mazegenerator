@@ -10,76 +10,73 @@ import Foundation
 
 
 struct Maze {
-	var cells: [[Cell]]
-	
-	var width: Int { cells[0].count }
-	var height: Int { cells.count }
+	var cells: [Cell]
+	var width: Int
+
+	var height: Int { cells.count / width }
+	var isEmpty: Bool { cells.isEmpty }
 	
 	subscript(x: Int, y: Int) -> Cell? {
 		if x < 0 || x >= width || y < 0 || y >= height { return nil }
-		return cells[y][x]
+		return cells[y * width + x]
+	}
+	
+	subscript(position: Position) -> Cell {
+		cells[index(position)]
+	}
+	
+	subscript(position: Position, direction: Direction) -> Cell? {
+		if let index = index(position, direction) {
+			return cells[index]
+		}
+		return nil
 	}
 	
 	init(width: Int, height: Int) {
-		cells = Array(repeating: Array(repeating: Cell(walls: .all), count: width), count: height)
+		self.width = width
+		cells = Array(repeating: Cell(walls: .all), count: height * width)
       for y in 0..<height {
          for x in 0..<width {
-            cells[y][x].position = Position(x, y)
-         }
-      }
-	}
-   
-   func randomCell() -> Cell {
-      cells.randomElement()!.randomElement()!
-   }
-}
-
-extension Maze {
-	struct Cell {
-		var walls: Wall = []
-		var visited = false
-      var position = Position(0, 0)
-      
-      mutating func remove(_ wall: Wall) {
-         
-      }
-      
-      var allWalls: [Wall] {
-         [Wall.left, Wall.right, Wall.top, Wall.bottom].compactMap { wall in
-            walls.contains(wall) ? wall : nil
-         }
-      }
-      
-      mutating func remove(wall: Wall, atX x: Int, y: Int) {
-         cells[y][x].remove(wall)
-         
-         switch wall {
-         case .top: if y > 0 { cells[y - 1][x].remove(.bottom) }
-         case .bottom: if y < (height - 1) { cells[y + 1][x].remove(.top) }
-         case .left: if x > 0 { cells[y][x - 1].remove(.right) }
-         case .right: if x < (width - 1) { cells[y][x + 1].remove(.left) }
-         default: break
+            cells[y * width + x].position = Position(x, y)
          }
       }
 	}
 	
-   struct Position {
-      let x: Int
-      let y: Int
-      init(_ x: Int, _ y: Int) {
-         self.x = x
-         self.y = y
-      }
-   }
+	mutating func clear() {
+		for i in cells.indices {
+			cells[i].visited = false
+			cells[i].walls = .all
+		}
+	}
    
-	struct Wall: OptionSet {
+   func randomCell() -> Cell {
+      cells.randomElement()!
+   }
+	
+	static let empty = Maze(width: 0, height: 0)
+}
+
+extension Maze {
+	typealias Wall = Direction
+	struct Direction: OptionSet {
 		let rawValue: Int
 
-		static var left = Wall(rawValue: 1 << 0)
-		static var right = Wall(rawValue: 1 << 1)
-		static var top = Wall(rawValue: 1 << 3)
-		static var bottom = Wall(rawValue: 1 << 4)
+		static var left = Direction(rawValue: 1 << 0)
+		static var right = Direction(rawValue: 1 << 1)
+		static var up = Direction(rawValue: 1 << 3)
+		static var down = Direction(rawValue: 1 << 4)
 		
-		static var all: Wall = [.left, .right, .top, .bottom]
+		static var all: Direction = [.left, .right, .up, .down]
+		static var none: Direction = []
+		
+		var inverse: Direction? {
+			switch self {
+			case .left: return .right
+			case .right: return .left
+			case .up: return .down
+			case .down: return .up
+			default: return nil
+			}
+		}
 	}
 }

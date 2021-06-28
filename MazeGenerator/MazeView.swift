@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct MazeView: View {
-	@State var maze: Maze
+	@Binding var maze: Maze
+	@ObservedObject var generator: MazeGenerator
+	@Binding var done: Bool
+	
 	var body: some View {
 		VStack(spacing: 0) {
 			ForEach(0..<maze.height, id: \.self) { y in
 				HStack(spacing: 0) {
 					ForEach(0..<maze.width, id: \.self) { x in
 						if let cell = maze[x, y] {
-							Cell(cell: cell)
+							Cell(cell: cell, fill: cell.visited ? .red : .white)
 						}
 					}
 				}
@@ -54,14 +57,14 @@ extension MazeView {
 				}
 				
 				VStack() {
-					if cell.walls.contains(.top) {
+					if cell.walls.contains(.up) {
 						Rectangle()
 							.fill(wall)
 							.frame(height: wallThickness)
 							.offset(y: -wallThickness / 2)
 					}
 					Spacer()
-					if cell.walls.contains(.bottom) {
+					if cell.walls.contains(.down) {
 						Rectangle()
 							.fill(wall)
 							.frame(height: wallThickness)
@@ -74,9 +77,9 @@ extension MazeView {
 	}
 }
 
-struct MazeView_Previews: PreviewProvider {
-	static var previews: some View {
-		MazeView(maze: Maze(width: 10, height: 10))
-			.padding()
-	}
-}
+//struct MazeView_Previews: PreviewProvider {
+//	static var previews: some View {
+//		MazeView(maze: Maze(width: 10, height: 10))
+//			.padding()
+//	}
+//}

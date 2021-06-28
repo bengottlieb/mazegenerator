@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B56B24582689D8AB00AEC813 /* Maze.Position.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56B24572689D8AB00AEC813 /* Maze.Position.swift */; };
+		B56B245A2689DC1800AEC813 /* Maze.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B56B24592689DC1700AEC813 /* Maze.Cell.swift */; };
 		B59EB80B268969DD009B52E8 /* MazeGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59EB80A268969DD009B52E8 /* MazeGeneratorApp.swift */; };
 		B59EB80D268969DD009B52E8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59EB80C268969DD009B52E8 /* ContentView.swift */; };
 		B59EB80F268969DE009B52E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B59EB80E268969DE009B52E8 /* Assets.xcassets */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B56B24572689D8AB00AEC813 /* Maze.Position.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maze.Position.swift; sourceTree = "<group>"; };
+		B56B24592689DC1700AEC813 /* Maze.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maze.Cell.swift; sourceTree = "<group>"; };
 		B59EB807268969DD009B52E8 /* MazeGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MazeGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B59EB80A268969DD009B52E8 /* MazeGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MazeGeneratorApp.swift; sourceTree = "<group>"; };
 		B59EB80C268969DD009B52E8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -63,6 +67,8 @@
 			isa = PBXGroup;
 			children = (
 				B5EB4B792689714800B5659D /* Maze.swift */,
+				B56B24592689DC1700AEC813 /* Maze.Cell.swift */,
+				B56B24572689D8AB00AEC813 /* Maze.Position.swift */,
 				B5EB4B7B2689715600B5659D /* MazeGenerator.swift */,
 				B59EB80A268969DD009B52E8 /* MazeGeneratorApp.swift */,
 				B59EB80C268969DD009B52E8 /* ContentView.swift */,
@@ -157,6 +163,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B56B245A2689DC1800AEC813 /* Maze.Cell.swift in Sources */,
+				B56B24582689D8AB00AEC813 /* Maze.Position.swift in Sources */,
 				B59EB80D268969DD009B52E8 /* ContentView.swift in Sources */,
 				B59EB81F26896AFC009B52E8 /* MazeView.swift in Sources */,
 				B5EB4B7C2689715600B5659D /* MazeGenerator.swift in Sources */,
